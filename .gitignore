@@ -1,3 +1,5 @@
 go.mod
 go.sum
 *.log
+.vscode/
+launch.json

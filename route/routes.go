@@ -4,4 +4,14 @@ import "github.com/gin-gonic/gin"
 
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/categories", getAllCategories)
+	server.GET("/categories/:category_id", getCategoryByID)
+	server.POST("categories", createCategory)
+	server.PUT("/categories/:category_id", updateCategoryByID)
+	server.DELETE("/categories/:category_id", deleteCategoryByID)
+
+	server.POST("/upload", uploadFile)
+	server.POST("/uploadmultiple", UploadMultipleFiles)
+
+	server.POST("/signup", signup)
+	server.POST("/login", login)
 }
