@@ -1,6 +1,9 @@
 package route
 
-import "github.com/gin-gonic/gin"
+import (
+	"example.com/goods-manage/middleware"
+	"github.com/gin-gonic/gin"
+)
 
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/categories", getAllCategories)
@@ -9,8 +12,12 @@ func RegisterRoutes(server *gin.Engine) {
 	server.PUT("/categories/:category_id", updateCategoryByID)
 	server.DELETE("/categories/:category_id", deleteCategoryByID)
 
-	server.POST("/upload", uploadFile)
-	server.POST("/uploadmultiple", UploadMultipleFiles)
+	authenticated := server.Group("/")
+	authenticated.Use(middleware.AuthMiddleware)
+	{
+		authenticated.POST("/upload", uploadFile)
+		authenticated.POST("/uploadmultiple", UploadMultipleFiles)
+	}
 
 	server.POST("/signup", signup)
 	server.POST("/login", login)
