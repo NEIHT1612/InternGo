@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -12,15 +14,17 @@ var DB *sql.DB
 
 func NewDB() *sql.DB {
 	// Connection configuration
-	host := "localhost"
-	port := 5432
-	user := "postgres"
-	password := "123456"
-	dbname := "manage_goods"
-	schemename := "goods_management"
+	_ = godotenv.Load()
+
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+	schemename := os.Getenv("SCHEME_NAME")
 
 	// Build connection string
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s search_path=%s sslmode=disable",
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s search_path=%s sslmode=disable",
 		host, port, user, password, dbname, schemename)
 
 	// Open connection

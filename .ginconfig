@@ -1,0 +1,27 @@
+# run: gin
+
+# Configuration file for Gin web framework
+
+# Root directory of the application
+root = "."
+
+# Main Go file to run
+bin = "run.bat"
+
+# Directory for temporary files
+build = "tmp"
+
+# Port for the Gin server
+port = 3000
+
+# Port for the application server
+appPort = 8080
+
+# Tracking file changes in the current directory
+path = "."
+
+# Rebuild and restart the server immediately on file changes
+immediate = true
+
+# Excluded directories from watching
+excludeDir = ["vendor", "tmp"]
