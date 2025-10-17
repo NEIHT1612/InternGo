@@ -2,13 +2,13 @@ package repository
 
 import "example.com/goods-manage/models"
 
-type ProductRepo interface {
+type IProductRepo interface {
 	GetAllProducts() ([]models.Product, error)
 }
 
 type productRepo struct{}
 
-func NewProductRepo() ProductRepo {
+func NewProductRepo() IProductRepo {
 	return &productRepo{}
 }
 

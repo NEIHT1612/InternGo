@@ -2,6 +2,7 @@ package main
 
 import (
 	"example.com/goods-manage/db"
+	"example.com/goods-manage/logger"
 	"example.com/goods-manage/route"
 	"github.com/gin-gonic/gin"
 )
@@ -11,8 +12,13 @@ func main() {
 
 	db.NewDB()
 
-	server := gin.Default()
+	logger.InitLogger()
+	defer logger.Sync()
 
+	server := gin.Default()
+	server.Use(gin.Recovery())
+	server.Use(logger.GinZapLogger(logger.Log))
+	
 	route.RegisterRoutes(server)
 
 	server.Run(":8080")
