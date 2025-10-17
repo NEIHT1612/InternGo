@@ -6,7 +6,7 @@
 root = "."
 
 # Main Go file to run
-bin = "run.bat"
+bin = "main.go"
 
 # Directory for temporary files
 build = "tmp"

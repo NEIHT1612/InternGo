@@ -12,6 +12,8 @@ func RegisterRoutes(server *gin.Engine) {
 	server.PUT("/categories/:category_id", updateCategoryByID)
 	server.DELETE("/categories/:category_id", deleteCategoryByID)
 
+	server.GET("/products", getAllProducts)
+
 	authenticated := server.Group("/")
 	authenticated.Use(middleware.AuthMiddleware)
 	{
