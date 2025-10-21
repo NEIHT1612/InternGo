@@ -1,28 +1,33 @@
 package logger
 
 import (
+	"fmt"
 	"os"
+	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var Log *zap.Logger
+var (
+	Log *zap.Logger
+	logFile *os.File
+	fileMutex sync.Mutex
+	maxSize = 3 * 1024 
+	currentLog string
+)
 
 func InitLogger() {
+	// Create logs directory if it doesn't exist
 	if _, err := os.Stat("logger/logs"); os.IsNotExist(err) {
 		os.MkdirAll("logger/logs", os.ModePerm)
 	}
 
-	logFile := &lumberjack.Logger{
-		Filename:   "logger/logs/app.log", 
-		MaxSize:    10,  // Megabytes
-		MaxBackups: 5,  // Keep last 5 log files
-		MaxAge:     30,  // Days to keep log files
-		Compress:   true, // Compress old log files
-	}
+	// Create a new log file with rotation
+	createNewLogFile()
 
+	// Configure zap logger
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        "time",
 		LevelKey:       "level",
@@ -37,6 +42,7 @@ func InitLogger() {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
+	// Configure json logger with file rotation
 	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(encoderConfig),
 		zapcore.NewMultiWriteSyncer(
@@ -47,8 +53,47 @@ func InitLogger() {
 	)
 
 	Log = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+
+	// Start log rotation monitoring
+	go monitorLogSize()
+}
+
+func createNewLogFile() {
+	fileMutex.Lock()
+	defer fileMutex.Unlock()
+
+	if logFile != nil {
+		logFile.Close()
+	}
+
+	newName := time.Now().Format("2006-01-02_15-04-05")
+	currentLog = fmt.Sprintf("logger/logs/%s.log", newName)
+	var err error
+	logFile, err = os.Create(currentLog)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func monitorLogSize() {
+	for {
+		time.Sleep(1 * time.Second)
+		fileMutex.Lock()
+		info, err := os.Stat(currentLog)
+		if err == nil && info.Size() >= int64(maxSize) {
+			createNewLogFile()
+		}
+		fileMutex.Unlock()
+	}
 }
 
 func Sync() {
-	Log.Sync()
+	fileMutex.Lock()
+	defer fileMutex.Unlock()
+	if Log != nil {
+		Log.Sync()
+	}
+	if logFile != nil {
+		logFile.Close()
+	}
 }
