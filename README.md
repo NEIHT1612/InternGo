@@ -117,6 +117,7 @@ A comprehensive project repository for InternGo.
 
 ### 3. Websocket (Socket trong Golang)
 - Tích hợp websocket với Gin, ví dụ gửi thông báo real-time.
+- Link git: https://github.com/NEIHT1612/WebSocketDemo
 
 ### 4. Gin CLI
 - Sử dụng Gin CLI để hỗ trợ auto-reload khi dev.
@@ -136,6 +137,7 @@ A comprehensive project repository for InternGo.
 - Sử dụng GORM để thao tác ORM
   - Hỗ trợ cả ORM lẫn native SQL query
 - Migration tự động bằng GORM AutoMigrate
+- Link git: https://github.com/NEIHT1612/GORM-Golang
 
 ### 9. Migration & Chuyển đổi dữ liệu
 - Hỗ trợ migration giữa các phiên bản SQL (có thể dùng GORM hoặc tool migration như goose/migrate).
