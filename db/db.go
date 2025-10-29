@@ -14,7 +14,12 @@ var DB *sql.DB
 
 func NewDB() *sql.DB {
 	// Connection configuration
-	_ = godotenv.Load()
+	env := os.Getenv("APP_ENV")
+	filename := ".env"
+	if env == "production" {
+		filename = ".env.prod"
+	}
+	_ = godotenv.Load(filename)
 
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -22,7 +27,7 @@ func NewDB() *sql.DB {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 	schemename := os.Getenv("SCHEME_NAME")
-
+	fmt.Println(schemename)
 	// Build connection string
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s search_path=%s sslmode=disable",
 		host, port, user, password, dbname, schemename)
