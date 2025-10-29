@@ -1,4 +1,4 @@
-package utils
+package common
 
 import (
 	"time"
@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const secret_key = "justmeknow"
 
 func GenerateToken(Username string, CustomerID uuid.UUID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -15,7 +14,7 @@ func GenerateToken(Username string, CustomerID uuid.UUID) (string, error) {
 		"customer_id": CustomerID,
 		"exp":         time.Now().Add(time.Hour * 2).Unix(),
 	})
-	tokenSubString, err := token.SignedString([]byte(secret_key))
+	tokenSubString, err := token.SignedString([]byte(SecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -31,7 +30,7 @@ func VerifyToken(tokenString string) (uuid.UUID, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrTokenMalformed
 		}
-		return []byte(secret_key), nil
+		return []byte(SecretKey), nil
 	})
 	if err != nil {
 		return uuid.Nil, err

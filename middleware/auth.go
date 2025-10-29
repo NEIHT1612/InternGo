@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"example.com/goods-manage/utils"
+	"example.com/goods-manage/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ func AuthMiddleware(context *gin.Context) {
 		return
 	}
 
-	customerID, err := utils.VerifyToken(token)
+	customerID, err := common.VerifyToken(token)
 	if err != nil {
 		context.JSON(401, gin.H{"error": "Invalid token"})
 		context.Abort()

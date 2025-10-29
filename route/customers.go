@@ -3,41 +3,71 @@ package route
 import (
 	"net/http"
 
+	"example.com/goods-manage/common"
 	"example.com/goods-manage/models"
-	"example.com/goods-manage/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func signup(ctx *gin.Context) {
 	var customer models.Customer
 	if err := ctx.ShouldBindJSON(&customer); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Can't parse data"})
+		ctx.JSON(http.StatusBadRequest, common.BaseResponse[any]{
+			Code: http.StatusBadRequest,
+			Message: common.StatusBadRequest,
+			Data: nil,
+		})
 		return
 	}
 	if err := models.CreateUser(&customer); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Can't create user"})
+		ctx.JSON(http.StatusInternalServerError, common.BaseResponse[any]{
+			Code: http.StatusInternalServerError,
+			Message: common.StatusCreateFailed,
+			Data: nil,
+		})
 		return
 	}
-	ctx.JSON(http.StatusCreated, "Sign up successfully")
+	
+	ctx.JSON(http.StatusOK, common.BaseResponse[any]{
+		Code: http.StatusOK,
+		Message: "Signup successfully",
+		Data: nil,
+	})
 }
 
 func login(ctx *gin.Context) {
 	var customer models.Customer
 	if err := ctx.ShouldBindJSON(&customer); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Can't parse data"})
+		ctx.JSON(http.StatusBadRequest, common.BaseResponse[any]{
+			Code: http.StatusBadRequest,
+			Message: common.StatusBadRequest,
+			Data: nil,
+		})
 		return
 	}
-	
+
 	if err := models.LoginUser(&customer); err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid username or password"})
+		ctx.JSON(http.StatusUnauthorized, common.BaseResponse[any]{
+			Code: http.StatusUnauthorized,
+			Message: common.StatusUnauthorized,
+			Data: nil,
+		})
 		return
 	}
 
-	token, err := utils.GenerateToken(customer.Username, customer.CustomerID)
+	token, err := common.GenerateToken(customer.Username, customer.CustomerID)
+
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Can't generate token"})
+		ctx.JSON(http.StatusInternalServerError, common.BaseResponse[any]{
+			Code: http.StatusInternalServerError,
+			Message: common.StatusCreateFailed,
+			Data: nil,
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"token": token})
+	ctx.JSON(http.StatusOK, common.BaseResponse[any]{
+		Code: http.StatusOK,
+		Message: common.StatusCreateSuccess,
+		Data: map[string]any{"token": token},
+	})
 }

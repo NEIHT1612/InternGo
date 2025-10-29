@@ -1,16 +1,20 @@
 package route
 
 import (
+	"example.com/goods-manage/common"
 	"example.com/goods-manage/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(server *gin.Engine) {
-	server.GET("/categories", getAllCategories)
-	server.GET("/categories/:category_id", getCategoryByID)
-	server.POST("categories", createCategory)
-	server.PUT("/categories/:category_id", updateCategoryByID)
-	server.DELETE("/categories/:category_id", deleteCategoryByID)
+	categories := server.Group(("/categories"))
+	{
+		categories.GET("", getAllCategories)
+		categories.GET("/:category_id", getCategoryByID)
+		categories.POST("", createCategory)
+		categories.PUT("/:category_id", updateCategoryByID)
+		categories.DELETE("/:category_id", deleteCategoryByID)
+	}
 
 	server.GET("/products", getAllProducts)
 
@@ -23,4 +27,6 @@ func RegisterRoutes(server *gin.Engine) {
 
 	server.POST("/signup", signup)
 	server.POST("/login", login)
+
+	server.NoRoute(common.NotFound)
 }

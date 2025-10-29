@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"example.com/goods-manage/db"
-	"example.com/goods-manage/utils"
+	"example.com/goods-manage/common"
 	"github.com/google/uuid"
 )
 
@@ -20,7 +20,7 @@ func CreateUser(customer *Customer) error {
         VALUES ($1, $2)
         RETURNING customer_id, username
     `
-	password_hash, err := utils.HashPassword(customer.Password)
+	password_hash, err := common.HashPassword(customer.Password)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func LoginUser(customer *Customer) error {
 	if err != nil {
 		return err
 	}
-	if !utils.CheckPasswordHash(customer.Password, password_hash) {
+	if !common.CheckPasswordHash(customer.Password, password_hash) {
 		return errors.New("invalid credentials")
 	}
 	return nil

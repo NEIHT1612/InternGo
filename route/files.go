@@ -4,20 +4,29 @@ import (
 	"fmt"
 	"net/http"
 
+	"example.com/goods-manage/common"
 	"github.com/gin-gonic/gin"
 )
 
 func uploadFile(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
+		ctx.JSON(http.StatusBadRequest, common.BaseResponse[any]{
+			Code: http.StatusBadRequest,
+			Message: "No file uploaded",
+			Data: nil,
+		})
 		return
 	}
 
 	savePath := fmt.Sprintf("./uploads/%s", file.Filename)
 
 	if err := ctx.SaveUploadedFile(file, savePath); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Can't save file"})
+		ctx.JSON(http.StatusInternalServerError, common.BaseResponse[any]{
+			Code: http.StatusInternalServerError,
+			Message: "Can't save file",
+			Data: nil,
+		})
 		return
 	}
 
@@ -31,7 +40,11 @@ func uploadFile(ctx *gin.Context) {
 func UploadMultipleFiles(ctx *gin.Context) {
 	form, err := ctx.MultipartForm()
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Data upload is invalid"})
+		ctx.JSON(http.StatusBadRequest, common.BaseResponse[any]{
+			Code: http.StatusBadRequest,
+			Message: "Data upload is invalid",
+			Data: nil,
+		})
 		return
 	}
 
